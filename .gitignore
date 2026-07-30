@@ -1,0 +1,7 @@
+cache
+cache-test
+test-data
+tests
+venv
+network_classifier.egg-info
+**/__pychache__
