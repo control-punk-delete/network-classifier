@@ -10,83 +10,72 @@ class LookupResult:
 
     matches: list[Match] = field(default_factory=list)
 
-    def __bool__(self) -> bool:
+    def __bool__(self):
         return bool(self.matches)
 
     @property
-    def found(self) -> bool:
+    def found(self):
         return bool(self.matches)
 
     @property
-    def providers(self) -> set[str]:
+    def providers(self):
         return {
-            match.provider
-            for match in self.matches
+            m.provider
+            for m in self.matches
         }
 
     @property
-    def categories(self) -> set[str]:
+    def categories(self):
         return {
-            match.category
-            for match in self.matches
+            m.category
+            for m in self.matches
         }
 
     @property
-    def networks(self) -> set[str]:
+    def networks(self):
         return {
-            match.network
-            for match in self.matches
+            m.network
+            for m in self.matches
         }
 
     @property
-    def first(self) -> Match | None:
-        if not self.matches:
-            return None
-
-        return self.matches[0]
+    def first(self):
+        return self.matches[0] if self.matches else None
 
     def has_category(
         self,
         category: str,
-    ) -> bool:
-
+    ):
         return category in self.categories
 
-    def has_provider(
-        self,
-        provider: str,
-    ) -> bool:
-
-        return provider in self.providers
-
     @property
-    def is_cloud(self) -> bool:
+    def is_cloud(self):
         return self.has_category("cloud")
 
     @property
-    def is_cdn(self) -> bool:
+    def is_cdn(self):
         return self.has_category("cdn")
 
     @property
-    def is_hosting(self) -> bool:
+    def is_hosting(self):
         return self.has_category("hosting")
 
     @property
-    def is_vpn(self) -> bool:
+    def is_vpn(self):
         return self.has_category("vpn")
 
     @property
-    def is_proxy(self) -> bool:
+    def is_proxy(self):
         return self.has_category("proxy")
 
     @property
-    def is_tor(self) -> bool:
+    def is_tor(self):
         return self.has_category("tor")
 
     @property
-    def is_anycast(self) -> bool:
+    def is_anycast(self):
         return self.has_category("anycast")
 
     @property
-    def is_scanner(self) -> bool:
+    def is_scanner(self):
         return self.has_category("scanner")

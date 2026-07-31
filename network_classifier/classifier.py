@@ -1,220 +1,60 @@
 from __future__ import annotations
-from .models import (
-    LookupResult,
-    Match,
-)
-
-
-import json
 
 from ipaddress import ip_address
 from pathlib import Path
 
-
 from .cache import Cache
 from .config import DEFAULT_SOURCE_URL
 from .downloader import Downloader
-from .index import PyTriciaIndex
+from .index import PrefixIndex
+from .models import LookupResult, Match
 from .updater import DatabaseUpdater
 
 
-from .models import (
-    LookupResult,
-    LookupHit,
-    Match,
-)
-
-
-
 class NetworkClassifier:
-
-
     def __init__(
         self,
-        source: str | Path | None = None,
-        cache: str | Path | None = None,
+        database: str | Path | None = None,
+        *,
         auto_update: bool = False,
-        source_url: str | None = None,
-    ) -> None:
+        source_url: str = DEFAULT_SOURCE_URL,
+        cache_dir: str | Path | None = None,
+    ):
 
+        self.index = PrefixIndex()
 
-        self.index = PyTriciaIndex()
-
-
-        self.metadata: dict = {}
-
-
-        self.cache = Cache(
-            cache
-        )
-
-
-        self.source_url = (
-            source_url
-            or DEFAULT_SOURCE_URL
-        )
-
-
+        self.cache = Cache(cache_dir)
 
         #
-        # Priority:
+        # Використовуємо локальну базу
         #
-        # 1. Explicit local source
-        # 2. Remote update
-        # 3. Existing cache
-        #
-        
+        if database is not None:
 
-        if source:
+            self.database = Path(database)
 
-
-            self.load(
-                source
+            self.index.load(
+                self.database / "index.json"
             )
 
-
-        elif auto_update:
-
-
-            self.update_database()
-
-
-
-        elif self.cache.exists():
-
-
-            self.load_cache()
-
-
-
-        else:
-
-
-            raise RuntimeError(
-                "Database unavailable"
-            )
-
-
-
-    def load(
-        self,
-        source: str | Path,
-    ) -> None:
-
-
-        source = Path(
-            source
-        )
-
-
-        with (
-            source / "metadata.json"
-        ).open(
-            encoding="utf8"
-        ) as fp:
-
-
-            self.metadata = json.load(
-                fp
-            )
-
-
-
-        with (
-            source / "index.json"
-        ).open(
-            encoding="utf8"
-        ) as fp:
-
-
-            rows = json.load(
-                fp
-            )
-
-
-
-        self._build_index(
-            rows
-        )
-
-
-
-    def load_cache(
-        self,
-    ) -> None:
-
+            return
 
         #
-        # Important:
-        # recreate index before rebuild
+        # Використовуємо кеш
         #
+        self.database = self.cache.path
 
-        self.index = PyTriciaIndex()
+        if auto_update:
 
-
-        self.metadata = (
-            self.cache.load_metadata()
-        )
-
-
-        rows = (
-            self.cache.load_index()
-        )
-
-
-        self._build_index(
-            rows
-        )
-
-
-
-    def _build_index(
-        self,
-        rows: list[dict],
-    ) -> None:
-
-
-        for row in rows:
-
-
-            self.index.add(
-
-                cidr=row["cidr"],
-
-                provider=row["provider"],
-
-                category=row["category"],
-
+            updater = DatabaseUpdater(
+                downloader=Downloader(source_url),
+                cache=self.cache,
             )
 
+            updater.update_if_needed()
 
-
-    def update_database(
-        self,
-    ) -> None:
-
-
-        downloader = Downloader(
-            self.source_url
+        self.index.load(
+            self.cache.index_file
         )
-
-
-        updater = DatabaseUpdater(
-
-            downloader,
-
-            self.cache,
-
-        )
-
-
-        updater.update_if_needed()
-
-
-
-        self.load_cache()
-
-
 
     def lookup(
         self,
@@ -232,11 +72,13 @@ class NetworkClassifier:
             for item in items:
 
                 result.matches.append(
+
                     Match(
                         network=str(network),
                         provider=item["provider"],
                         category=item["category"],
                     )
+
                 )
 
         return result
