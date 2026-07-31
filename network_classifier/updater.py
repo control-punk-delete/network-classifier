@@ -116,17 +116,31 @@ class DatabaseUpdater:
     ) -> bool:
 
 
+        def version_key(
+            metadata: dict,
+        ):
+
+            return (
+
+                metadata.get("generated")
+
+                or
+
+                metadata.get("lookup_version")
+
+                or
+
+                metadata.get("version")
+
+            )
+
         return (
 
-            local.get(
-                "version"
-            )
+            version_key(local)
 
             ==
 
-            remote.get(
-                "version"
-            )
+            version_key(remote)
 
         )
 

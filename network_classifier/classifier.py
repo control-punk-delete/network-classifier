@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from ipaddress import ip_address
 from pathlib import Path
 
@@ -36,6 +38,20 @@ class NetworkClassifier:
                 self.database / "index.json"
             )
 
+            metadata_file = (
+                self.database / "metadata.json"
+            )
+
+            self.metadata = (
+                json.loads(
+                    metadata_file.read_text(
+                        encoding="utf8",
+                    )
+                )
+                if metadata_file.exists()
+                else {}
+            )
+
             return
 
         #
@@ -55,6 +71,8 @@ class NetworkClassifier:
         self.index.load(
             self.cache.index_file
         )
+
+        self.metadata = self.cache.get_metadata()
 
     def lookup(
         self,

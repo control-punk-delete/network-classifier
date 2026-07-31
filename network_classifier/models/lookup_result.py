@@ -13,6 +13,9 @@ class LookupResult:
     def __bool__(self):
         return bool(self.matches)
 
+    def __len__(self):
+        return len(self.matches)
+
     @property
     def found(self):
         return bool(self.matches)

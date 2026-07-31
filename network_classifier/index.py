@@ -1,15 +1,18 @@
 from __future__ import annotations
 
 
+import json
+
 from ipaddress import ip_address
 from ipaddress import ip_network
+from pathlib import Path
 
 
 import pytricia
 
 
 
-class PyTriciaIndex:
+class PrefixIndex:
 
 
     def __init__(self):
@@ -17,6 +20,26 @@ class PyTriciaIndex:
         self.ipv4 = pytricia.PyTricia(32)
 
         self.ipv6 = pytricia.PyTricia(128)
+
+
+
+    def load(
+        self,
+        path: str | Path,
+    ) -> None:
+
+        path = Path(path)
+
+        with path.open(encoding="utf8") as fp:
+            entries = json.load(fp)
+
+        for entry in entries:
+
+            self.add(
+                cidr=entry["cidr"],
+                provider=entry["provider"],
+                category=entry["category"],
+            )
 
 
 
