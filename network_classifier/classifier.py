@@ -217,20 +217,19 @@ class NetworkClassifier:
 
 
     def lookup(self, ip: str,) -> LookupResult:
+        address = ip_address(ip)
+        result = LookupResult(ip=ip,)
 
-    address = ip_address(ip)
-    result = LookupResult(ip=ip,)
+        for network, items in self.index.lookup(address):
 
-    for network, items in self.index.lookup(address):
+            for item in items:
+                result.matches.append(
 
-        for item in items:
-            result.matches.append(
-
-                Match(
-                    network=str(network),
-                    provider=item["provider"],
-                    category=item["category"],
+                    Match(
+                        network=str(network),
+                        provider=item["provider"],
+                        category=item["category"],
+                    )
                 )
-            )
 
-    return result
+        return result

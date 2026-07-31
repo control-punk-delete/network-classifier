@@ -4,4 +4,5 @@ test-data
 tests
 venv
 network_classifier.egg-info
-**/__pychache__
+__pycache__/
+*.py[cod]
