@@ -1,4 +1,8 @@
 from __future__ import annotations
+from .models import (
+    LookupResult,
+    Match,
+)
 
 
 import json
@@ -212,51 +216,21 @@ class NetworkClassifier:
 
 
 
-    def lookup(
-        self,
-        ip: str,
-    ):
+    def lookup(self, ip: str,) -> LookupResult:
 
+    address = ip_address(ip)
+    result = LookupResult(ip=ip,)
 
-        address = ip_address(
-            ip
-        )
+    for network, items in self.index.lookup(address):
 
+        for item in items:
+            result.matches.append(
 
-        matches = (
-            self.index.lookup(
-                address
-            )
-        )
-
-
-        result = []
-
-
-        for network, items in matches:
-
-
-            result.append(
-
-                {
-                    "network": str(network),
-
-                    "matches": [
-
-                        {
-                            "provider": item["provider"],
-
-                            "category": item["category"],
-
-                        }
-
-                        for item in items
-
-                    ],
-
-                }
-
+                Match(
+                    network=str(network),
+                    provider=item["provider"],
+                    category=item["category"],
+                )
             )
 
-
-        return result
+    return result
