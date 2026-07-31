@@ -216,15 +216,22 @@ class NetworkClassifier:
 
 
 
-    def lookup(self, ip: str,) -> LookupResult:
+    def lookup(
+        self,
+        ip: str,
+    ) -> LookupResult:
+
         address = ip_address(ip)
-        result = LookupResult(ip=ip,)
+
+        result = LookupResult(
+            ip=ip,
+        )
 
         for network, items in self.index.lookup(address):
 
             for item in items:
-                result.matches.append(
 
+                result.matches.append(
                     Match(
                         network=str(network),
                         provider=item["provider"],
