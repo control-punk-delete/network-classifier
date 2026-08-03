@@ -5,10 +5,31 @@
 
 ## Встановлення
 
-```bash
-pip install git+https://github.com/control-punk-delete/network-classifier.git
+Рекомендований варіант — встановлення в ізольоване віртуальне середовище:
 
-pip uninstall network_classifier
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install .
+```
+
+Також можна встановити прямо з GitHub:
+
+```bash
+python -m pip install "git+https://github.com/control-punk-delete/network-classifier.git"
+```
+
+Якщо під час встановлення виникає помилка на кшталт `Permission denied` для шляху в `/opt/.../venv`, це означає, що віртуальне середовище належить іншому користувачу або системному процесу. У такому випадку використайте власне середовище або встановлення в користувацький простір:
+
+```bash
+python -m pip install --user .
+```
+
+Видалення пакету:
+
+```bash
+python -m pip uninstall network-classifier
 ```
 
 ## Використання з автооновленням із віддаленого джерела

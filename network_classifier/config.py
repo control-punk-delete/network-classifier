@@ -7,5 +7,5 @@ DEFAULT_SOURCE_URL = (
 
 
 DEFAULT_CACHE_DIR = (
-    "~/.cache/network-classifier"
+    "/tmp/.cache/network-classifier"
 )
