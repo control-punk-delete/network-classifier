@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 
-from __future__ import annotations
 from .checksum import sha256_file
 
 

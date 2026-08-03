@@ -1,7 +1,7 @@
+from __future__ import annotations
+
 import pytricia
 import json
-
-from __future__ import annotations
 
 from ipaddress import ip_address
 from ipaddress import ip_network
