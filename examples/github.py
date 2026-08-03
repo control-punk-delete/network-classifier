@@ -7,7 +7,7 @@ classifier = NetworkClassifier(
 
 
 test_ips = [
-    "1.1.1.1",
+    "152.39.190.4",
     "8.8.8.8",
     "52.95.110.1",
 ]
@@ -17,5 +17,5 @@ for ip in test_ips:
 
     result = classifier.lookup(ip)
 
-    print(result)
+    print(result.providers)
 
