@@ -6,7 +6,9 @@
 ## Встановлення
 
 ```bash
-pip install git+https://github.com/control-punk-delete/network-classifier.git          
+pip install git+https://github.com/control-punk-delete/network-classifier.git
+
+pip uninstall network_classifier
 ```
 
 ## Використання з автооновленням із віддаленого джерела
